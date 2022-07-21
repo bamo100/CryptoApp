@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {Button, Menu, Typography, Avatar} from 'antd';
 import {BrowserRouter as Router, Link} from 'react-router-dom';
-import {HomeOutlined, MoneyCollectOutlined, BulbOutlined, UserOutlined, FundOutlined} from '@ant-design/icons';
+import {HomeOutlined, MoneyCollectOutlined, BulbOutlined, UserOutlined, FundOutlined, MenuOutlined} from '@ant-design/icons';
 import icon from '../images/cryptocurrency.png'
 
 function Navbar() {
+   const [activeMenu, setActiveMenu] = useState(true);
+   const [screensize, setScreenSize] = useState(null);
+
+   useEffect(() => {
+     const handleResize = () => setScreenSize(window.innerWidth);
+
+     window.addEventListener('resize', handleResize);
+
+     handleResize();
+
+     return () => window.removeEventListener('resize', handleResize)
+   }, []);
+
+   useEffect(() => {
+      if(screensize < 760){
+          setActiveMenu(false)
+      }else{
+        setActiveMenu(true)
+      }
+   }, [screensize])
+
    function getItem(label, key, icon, children, type) {
       return {
         key,
@@ -29,8 +50,14 @@ function Navbar() {
             <Typography.Title level={2} className='logo'>
                 <Link to='/'>CryptoApp</Link>
             </Typography.Title>
+            <Button className='menu-control-container' onClick={() => setActiveMenu(!activeMenu)}>
+                 <MenuOutlined />
+            </Button>
         </div>    
-        <Menu  theme='dark' mode='vertical' items={items} />
+        {activeMenu && (
+           <Menu  theme='dark' mode='vertical' items={items} />
+        )}
+        
     </div>
   )
 }
